@@ -103,7 +103,7 @@ Wins: ${gameStats.scores.X} | Losses: ${gameStats.scores.O} | Draws: ${gameStats
 Win Rate: ${winRate}% | Games Played: ${totalGames}`;
 
       default:
-        return `🎮 ${getResultMessage()} in Tic-Tac-Toe (${settings.gridSize}×${settings.gridSize})! ${winner === 'X' ? '🎉' : winner === 'O' ? '😅' : '🤝'}`;
+        return `🎮 ${getResultMessage()} Dekh Bhai !!! (${settings.gridSize}×${settings.gridSize})! ${winner === 'X' ? '🎉' : winner === 'O' ? '😅' : '🤝'}`;
     }
   };
 
@@ -178,7 +178,7 @@ Win Rate: ${winRate}% | Games Played: ${totalGames}`;
       const shareText = generateShareText(format);
       const result = await Share.share({
         message: shareText,
-        title: 'Tic-Tac-Toe Result',
+        title: 'Dekh Bhai! Tic-Tac-Toe Result',
       });
 
       if (result.action === Share.sharedAction) {
@@ -195,7 +195,7 @@ Win Rate: ${winRate}% | Games Played: ${totalGames}`;
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Tic-Tac-Toe Result',
+          title: 'Dekh Bhai! Tic-Tac-Toe Result',
           text: generateShareText('social'),
           url: window.location.href,
         });
