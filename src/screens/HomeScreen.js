@@ -12,6 +12,7 @@ import {
   useTheme
 } from 'react-native-paper';
 import { AppStyles } from '../styles/app';
+import { getWinLength } from '../utils/gameLogic';
 
 export default function HomeScreen({ onNavigate }) {
   const [gridSize, setGridSize] = useState('3');
@@ -58,6 +59,17 @@ export default function HomeScreen({ onNavigate }) {
     }
   };
 
+  // Updated grid descriptions with new win criteria
+  const getGridDescription = (size) => {
+    const winLength = getWinLength(parseInt(size));
+    switch (size) {
+      case '3': return `Classic 3×3 grid - Get ${winLength} in a row to win`;
+      case '4': return `Extended 4×4 grid - Get ${winLength} in a row to win (Faster gameplay!)`;
+      case '5': return `Large 5×5 grid - Get ${winLength} in a row to win (More strategic!)`;
+      default: return '';
+    }
+  };
+
   return (
     <SafeAreaView style={AppStyles.safeArea}>
       <ScrollView 
@@ -79,10 +91,10 @@ export default function HomeScreen({ onNavigate }) {
         <Card style={[AppStyles.homeCard, { backgroundColor: theme.colors.surface }]}>
           <Card.Content>
             <Text style={[AppStyles.homeSectionTitle, { color: theme.colors.onSurface }]}>
-              🎯 Grid Size
+              🎯 Grid Size & Win Criteria
             </Text>
             <Text style={[AppStyles.homeSectionDescription, { color: theme.colors.onSurfaceVariant }]}>
-              Choose the game board size
+              {getGridDescription(gridSize)}
             </Text>
             <SegmentedButtons
               value={gridSize}
@@ -109,7 +121,7 @@ export default function HomeScreen({ onNavigate }) {
                     🤖 Player vs Computer
                   </Text>
                   <Text style={[AppStyles.homeRadioSubtext, { color: theme.colors.onSurfaceVariant }]}>
-                    Challenge our smart AI
+                    Challenge our enhanced AI with new win criteria
                   </Text>
                 </View>
               </View>
@@ -120,7 +132,7 @@ export default function HomeScreen({ onNavigate }) {
                     👤 Player vs Player
                   </Text>
                   <Text style={[AppStyles.homeRadioSubtext, { color: theme.colors.onSurfaceVariant }]}>
-                    Play with a friend locally
+                    Play with a friend locally - faster games!
                   </Text>
                 </View>
               </View>
@@ -196,6 +208,14 @@ export default function HomeScreen({ onNavigate }) {
               </Text>
               <Text style={[AppStyles.homeSummaryValue, { color: theme.colors.onPrimaryContainer }]}>
                 {gridSize}×{gridSize}
+              </Text>
+            </View>
+            <View style={AppStyles.homeSummaryRow}>
+              <Text style={[AppStyles.homeSummaryLabel, { color: theme.colors.onPrimaryContainer }]}>
+                Win Condition:
+              </Text>
+              <Text style={[AppStyles.homeSummaryValue, { color: theme.colors.onPrimaryContainer }]}>
+                {getWinLength(parseInt(gridSize))} in a row
               </Text>
             </View>
             <View style={AppStyles.homeSummaryRow}>

@@ -13,7 +13,7 @@ import {
 } from 'react-native-paper';
 import { AppStyles } from '../styles/app';
 import GameBoard from '../components/GameBoard';
-import { createGrid, checkWinner, getAvailableMoves } from '../utils/gameLogic';
+import { createGrid, checkWinner, getAvailableMoves, getWinLength, getWinningOpportunities } from '../utils/gameLogic';
 
 const { width, height } = Dimensions.get('window');
 
@@ -126,6 +126,7 @@ export default function GameScreen({ settings, onNavigate, initialScores, onScor
     setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
   };
 
+  // Enhanced AI with new win criteria awareness
   const makeAIMove = () => {
     const availableMoves = getAvailableMoves(grid);
     if (availableMoves.length === 0) return;
@@ -137,13 +138,13 @@ export default function GameScreen({ settings, onNavigate, initialScores, onScor
         selectedMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
         break;
       case 'medium':
-        selectedMove = getStrategicMove(availableMoves) || 
+        selectedMove = getEnhancedStrategicMove(availableMoves) || 
                      availableMoves[Math.floor(Math.random() * availableMoves.length)];
         break;
       case 'hard':
       case 'expert':
-        selectedMove = getBestMove(availableMoves) || 
-                     getStrategicMove(availableMoves) || 
+        selectedMove = getAdvancedStrategicMove(availableMoves) || 
+                     getEnhancedStrategicMove(availableMoves) || 
                      availableMoves[Math.floor(Math.random() * availableMoves.length)];
         break;
       default:
@@ -153,7 +154,9 @@ export default function GameScreen({ settings, onNavigate, initialScores, onScor
     makeMove(selectedMove);
   };
 
-  const getStrategicMove = (availableMoves) => {
+  // Enhanced strategic move with new win criteria
+  const getEnhancedStrategicMove = (availableMoves) => {
+    // Priority 1: Win immediately if possible
     for (let move of availableMoves) {
       const testGrid = [...grid];
       testGrid[move] = 'O';
@@ -162,6 +165,7 @@ export default function GameScreen({ settings, onNavigate, initialScores, onScor
       }
     }
     
+    // Priority 2: Block immediate player wins
     for (let move of availableMoves) {
       const testGrid = [...grid];
       testGrid[move] = 'X';
@@ -170,25 +174,62 @@ export default function GameScreen({ settings, onNavigate, initialScores, onScor
       }
     }
     
+    // Priority 3: Create multiple winning opportunities
+    let bestMove = null;
+    let maxOpportunities = 0;
+    
+    for (let move of availableMoves) {
+      const testGrid = [...grid];
+      testGrid[move] = 'O';
+      const opportunities = getWinningOpportunities(testGrid, safeSettings.gridSize, 'O');
+      
+      if (opportunities.length > maxOpportunities) {
+        maxOpportunities = opportunities.length;
+        bestMove = move;
+      }
+    }
+    
+    if (bestMove !== null) return bestMove;
+    
     return null;
   };
 
-  const getBestMove = (availableMoves) => {
-    const center = Math.floor((safeSettings.gridSize * safeSettings.gridSize) / 2);
-    const corners = [
-      0, 
-      safeSettings.gridSize - 1, 
-      (safeSettings.gridSize - 1) * safeSettings.gridSize, 
-      safeSettings.gridSize * safeSettings.gridSize - 1
-    ];
+  // Advanced strategic move for hard/expert AI
+  const getAdvancedStrategicMove = (availableMoves) => {
+    const winLength = getWinLength(safeSettings.gridSize);
     
-    if (availableMoves.includes(center)) return center;
-    
-    for (let corner of corners) {
-      if (availableMoves.includes(corner)) return corner;
+    // Look for moves that create immediate threats
+    for (let move of availableMoves) {
+      const testGrid = [...grid];
+      testGrid[move] = 'O';
+      
+      // Count how many ways this move could lead to a win
+      const opportunities = getWinningOpportunities(testGrid, safeSettings.gridSize, 'O');
+      const highPriorityOpportunities = opportunities.filter(op => op.playerCount >= winLength - 1);
+      
+      if (highPriorityOpportunities.length >= 2) { // Creates multiple immediate threats
+        return move;
+      }
     }
     
-    return null;
+    // Look for moves that build towards multiple winning lines
+    let bestMove = null;
+    let bestScore = 0;
+    
+    for (let move of availableMoves) {
+      const testGrid = [...grid];
+      testGrid[move] = 'O';
+      
+      const opportunities = getWinningOpportunities(testGrid, safeSettings.gridSize, 'O');
+      const score = opportunities.reduce((sum, op) => sum + op.priority, 0);
+      
+      if (score > bestScore) {
+        bestScore = score;
+        bestMove = move;
+      }
+    }
+    
+    return bestMove;
   };
 
   const resetGame = () => {
@@ -252,6 +293,10 @@ export default function GameScreen({ settings, onNavigate, initialScores, onScor
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const getWinCriteria = () => {
+    return getWinLength(safeSettings.gridSize);
   };
 
   if (!settings || !settings.gameMode) {
@@ -336,6 +381,9 @@ export default function GameScreen({ settings, onNavigate, initialScores, onScor
         <View style={AppStyles.gameInfo}>
           <Chip icon="grid" compact style={AppStyles.gameInfoChip}>
             Grid: {safeSettings.gridSize}×{safeSettings.gridSize}
+          </Chip>
+          <Chip icon="target" compact style={AppStyles.gameInfoChip}>
+            Win: {getWinCriteria()} in a row
           </Chip>
           <Chip icon="gamepad-variant" compact style={AppStyles.gameInfoChip}>
             Mode: {safeSettings.gameMode === 'pvc' ? 'vs AI' : 'vs Player'}
