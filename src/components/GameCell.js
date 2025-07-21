@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, StyleSheet, Animated, Vibration, Platform } from 'react-native';
+import { TouchableOpacity, Animated, Platform } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
+import { AppStyles } from '../styles/app';
+import * as Haptics from 'expo-haptics';
 
 export default function GameCell({ index, value, size, onPress, isWinning, disabled }) {
   const theme = useTheme();
@@ -9,7 +11,6 @@ export default function GameCell({ index, value, size, onPress, isWinning, disab
 
   React.useEffect(() => {
     if (value) {
-      // Animate in when value appears
       Animated.sequence([
         Animated.timing(scaleAnim, {
           toValue: 1.2,
@@ -33,7 +34,12 @@ export default function GameCell({ index, value, size, onPress, isWinning, disab
 
   React.useEffect(() => {
     if (isWinning && value) {
-      // Pulsing animation for winning cells
+      try {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } catch (error) {
+        console.log('Haptics not supported');
+      }
+
       const pulse = () => {
         Animated.sequence([
           Animated.timing(scaleAnim, {
@@ -59,20 +65,12 @@ export default function GameCell({ index, value, size, onPress, isWinning, disab
   const handlePress = () => {
     if (disabled || value !== null) return;
     
-    // Haptic feedback for mobile
     try {
-      if (Platform.OS === 'ios') {
-        // For iOS, we'll use Vibration as a fallback since expo-haptics requires installation
-        Vibration.vibrate(50);
-      } else if (Platform.OS === 'android') {
-        Vibration.vibrate(50);
-      }
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } catch (error) {
-      // Silently fail if vibration is not supported
-      console.log('Vibration not supported');
+      console.log('Haptics not supported');
     }
 
-    // Press animation
     Animated.sequence([
       Animated.timing(scaleAnim, {
         toValue: 0.95,
@@ -129,14 +127,13 @@ export default function GameCell({ index, value, size, onPress, isWinning, disab
   };
 
   const cellStyle = [
-    styles.cell,
+    AppStyles.gameCell,
     {
       width: size,
       height: size,
       backgroundColor: getCellBackgroundColor(),
       borderColor: getBorderColor(),
       opacity: disabled && !value ? 0.5 : 1,
-      // Add hover effect for web
       ...(Platform.OS === 'web' && !disabled && !value && {
         cursor: 'pointer',
       }),
@@ -144,7 +141,7 @@ export default function GameCell({ index, value, size, onPress, isWinning, disab
   ];
 
   const textStyle = [
-    styles.cellText,
+    AppStyles.gameCellText,
     {
       color: getTextColor(),
       fontSize: size * 0.35,
@@ -166,7 +163,6 @@ export default function GameCell({ index, value, size, onPress, isWinning, disab
         onPress={handlePress}
         disabled={disabled || value !== null}
         activeOpacity={0.8}
-        // Add hover effects for web
         onMouseEnter={Platform.OS === 'web' ? (e) => {
           if (!disabled && !value) {
             e.target.style.transform = 'scale(1.05)';
@@ -185,11 +181,10 @@ export default function GameCell({ index, value, size, onPress, isWinning, disab
           </Text>
         </Animated.View>
         
-        {/* Empty cell indicator for better UX */}
         {!value && !disabled && (
           <Animated.View 
             style={[
-              styles.emptyIndicator,
+              AppStyles.gameCellEmptyIndicator,
               {
                 opacity: 0.3,
                 backgroundColor: theme.colors.onSurface,
@@ -201,38 +196,3 @@ export default function GameCell({ index, value, size, onPress, isWinning, disab
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  cell: {
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    position: 'relative',
-  },
-  cellText: {
-    fontWeight: 'bold',
-    fontFamily: Platform.select({
-      ios: 'System',
-      android: 'Roboto',
-      web: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      default: 'System',
-    }),
-    textAlign: 'center',
-  },
-  emptyIndicator: {
-    position: 'absolute',
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    opacity: 0,
-  },
-});

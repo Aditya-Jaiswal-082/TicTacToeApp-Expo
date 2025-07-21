@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { Provider as PaperProvider, DefaultTheme, DarkTheme } from 'react-native-paper';
 import { useColorScheme } from 'react-native';
+import { AppStyles } from './src/styles/app';
 import HomeScreen from './src/screens/HomeScreen';
 import GameScreen from './src/screens/GameScreen';
 import ResultScreen from './src/screens/ResultScreen';
@@ -17,7 +18,6 @@ export default function App() {
     gameStats: null
   });
 
-  // Persistent scores only for "Play Again" sessions
   const [persistentScores, setPersistentScores] = useState({ X: 0, O: 0, draws: 0 });
   const [isPlayAgainSession, setIsPlayAgainSession] = useState(false);
   
@@ -29,7 +29,6 @@ export default function App() {
       setGameSettings(prev => ({ ...prev, ...additionalData }));
     }
     
-    // If navigating to game from home (new game), reset scores
     if (screen === 'game' && currentScreen === 'home') {
       setPersistentScores({ X: 0, O: 0, draws: 0 });
       setIsPlayAgainSession(false);
@@ -38,19 +37,16 @@ export default function App() {
     setCurrentScreen(screen);
   };
 
-  // Handle score updates from GameScreen
   const handleScoreUpdate = (newScores) => {
     setPersistentScores(newScores);
   };
 
   const handlePlayAgain = () => {
-    // Mark this as a "Play Again" session to maintain scores
     setIsPlayAgainSession(true);
     setCurrentScreen('game');
   };
 
   const handleNewGame = () => {
-    // Always reset scores for new game and mark as new session
     setPersistentScores({ X: 0, O: 0, draws: 0 });
     setIsPlayAgainSession(false);
     setCurrentScreen('home');
@@ -86,16 +82,9 @@ export default function App() {
 
   return (
     <PaperProvider theme={theme}>
-      <View style={styles.container}>
+      <View style={AppStyles.appContainer}>
         {renderScreen()}
       </View>
     </PaperProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});

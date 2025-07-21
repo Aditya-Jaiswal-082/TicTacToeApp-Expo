@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions, Platform, Alert, Share } from 'react-native';
+import { View, Platform, Alert, Share } from 'react-native';
 import { 
   Title, 
   Text, 
@@ -10,9 +10,8 @@ import {
   IconButton 
 } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { AppStyles } from '../styles/app';
 import * as Clipboard from 'expo-clipboard';
-
-const { width } = Dimensions.get('window');
 
 export default function ResultScreen({ 
   winner, 
@@ -109,13 +108,6 @@ Win Rate: ${winRate}% | Games Played: ${totalGames}`;
   };
 
   const shareResult = async () => {
-    const shareOptions = [
-      { title: '📱 Quick Share', value: 'native' },
-      { title: '📋 Copy to Clipboard', value: 'clipboard' },
-      { title: '📊 Share Stats', value: 'stats' },
-      { title: '📝 Detailed Report', value: 'detailed' },
-    ];
-
     if (Platform.OS === 'web') {
       showWebShareOptions();
     } else {
@@ -124,11 +116,6 @@ Win Rate: ${winRate}% | Games Played: ${totalGames}`;
   };
 
   const showMobileShareOptions = () => {
-    const options = ['Quick Share', 'Copy Simple', 'Copy Detailed', 'Copy Stats', 'Cancel'];
-    const cancelButtonIndex = options.length - 1;
-
-    // For now, we'll use Alert.alert since ActionSheet is not available
-    // In a real app, you might want to install @expo/react-native-action-sheet
     Alert.alert(
       'Share Result',
       'How would you like to share your result?',
@@ -195,11 +182,7 @@ Win Rate: ${winRate}% | Games Played: ${totalGames}`;
       });
 
       if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          Alert.alert('Success', 'Result shared successfully!');
-        } else {
-          Alert.alert('Success', 'Result shared!');
-        }
+        Alert.alert('Success', 'Result shared successfully!');
       }
     } catch (error) {
       console.error('Share error:', error);
@@ -236,7 +219,6 @@ Win Rate: ${winRate}% | Games Played: ${totalGames}`;
         if (navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(textToCopy);
         } else {
-          // Fallback for older browsers
           const textArea = document.createElement('textarea');
           textArea.value = textToCopy;
           textArea.style.position = 'fixed';
@@ -332,16 +314,15 @@ ${settings.gameMode === 'pvc' ? `🧠 AI Difficulty: ${settings.difficulty}` : '
   const experiencePoints = getExperiencePoints();
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
+    <View style={AppStyles.resultContainer}>
+      <View style={AppStyles.resultHeader}>
         <IconButton 
           icon="close" 
           onPress={goToSettings}
           size={24}
           iconColor={theme.colors.onSurface}
         />
-        <Text style={[styles.headerTitle, { color: theme.colors.onSurface }]}>
+        <Text style={[AppStyles.resultHeaderTitle, { color: theme.colors.onSurface }]}>
           Game Result
         </Text>
         <IconButton 
@@ -352,27 +333,26 @@ ${settings.gameMode === 'pvc' ? `🧠 AI Difficulty: ${settings.difficulty}` : '
         />
       </View>
 
-      {/* Result Header */}
-      <Card style={[styles.resultCard, { backgroundColor: theme.colors.surface }]}>
-        <Card.Content style={styles.resultContent}>
+      <Card style={[AppStyles.resultCard, { backgroundColor: theme.colors.surface }]}>
+        <Card.Content style={AppStyles.resultContent}>
           <MaterialCommunityIcons
             name={icon.name}
             size={80}
             color={icon.color}
-            style={styles.resultIcon}
+            style={AppStyles.resultIcon}
           />
           
-          <Title style={[styles.resultTitle, { color: theme.colors.onSurface }]}>
+          <Title style={[AppStyles.resultTitle, { color: theme.colors.onSurface }]}>
             {getResultMessage()}
           </Title>
           
-          <Text style={[styles.resultSubtitle, { color: theme.colors.onSurfaceVariant }]}>
+          <Text style={[AppStyles.resultSubtitle, { color: theme.colors.onSurfaceVariant }]}>
             {getResultSubMessage()}
           </Text>
 
           {experiencePoints > 0 && (
-            <Surface style={[styles.experienceCard, { backgroundColor: theme.colors.primaryContainer }]}>
-              <Text style={[styles.experienceText, { color: theme.colors.onPrimaryContainer }]}>
+            <Surface style={[AppStyles.resultExperienceCard, { backgroundColor: theme.colors.primaryContainer }]}>
+              <Text style={[AppStyles.resultExperienceText, { color: theme.colors.onPrimaryContainer }]}>
                 +{experiencePoints} XP Earned!
               </Text>
             </Surface>
@@ -380,38 +360,37 @@ ${settings.gameMode === 'pvc' ? `🧠 AI Difficulty: ${settings.difficulty}` : '
         </Card.Content>
       </Card>
 
-      {/* Game Statistics */}
       {gameStats && (
-        <Card style={styles.statsCard}>
+        <Card style={AppStyles.resultStatsCard}>
           <Card.Content>
-            <Text style={[styles.statsTitle, { color: theme.colors.onSurface }]}>
+            <Text style={[AppStyles.resultStatsTitle, { color: theme.colors.onSurface }]}>
               This Game
             </Text>
             
-            <View style={styles.statsGrid}>
-              <View style={styles.statItem}>
-                <Text style={[styles.statValue, { color: theme.colors.primary }]}>
+            <View style={AppStyles.resultStatsGrid}>
+              <View style={AppStyles.resultStatItem}>
+                <Text style={[AppStyles.resultStatValue, { color: theme.colors.primary }]}>
                   {gameStats.totalMoves}
                 </Text>
-                <Text style={[styles.statLabel, { color: theme.colors.onSurfaceVariant }]}>
+                <Text style={[AppStyles.resultStatLabel, { color: theme.colors.onSurfaceVariant }]}>
                   Total Moves
                 </Text>
               </View>
               
-              <View style={styles.statItem}>
-                <Text style={[styles.statValue, { color: theme.colors.secondary }]}>
+              <View style={AppStyles.resultStatItem}>
+                <Text style={[AppStyles.resultStatValue, { color: theme.colors.secondary }]}>
                   {gameStats.gameDuration}s
                 </Text>
-                <Text style={[styles.statLabel, { color: theme.colors.onSurfaceVariant }]}>
+                <Text style={[AppStyles.resultStatLabel, { color: theme.colors.onSurfaceVariant }]}>
                   Game Time
                 </Text>
               </View>
               
-              <View style={styles.statItem}>
-                <Text style={[styles.statValue, { color: theme.colors.tertiary }]}>
+              <View style={AppStyles.resultStatItem}>
+                <Text style={[AppStyles.resultStatValue, { color: theme.colors.tertiary }]}>
                   {settings.gridSize}×{settings.gridSize}
                 </Text>
-                <Text style={[styles.statLabel, { color: theme.colors.onSurfaceVariant }]}>
+                <Text style={[AppStyles.resultStatLabel, { color: theme.colors.onSurfaceVariant }]}>
                   Grid Size
                 </Text>
               </View>
@@ -420,31 +399,29 @@ ${settings.gameMode === 'pvc' ? `🧠 AI Difficulty: ${settings.difficulty}` : '
         </Card>
       )}
 
-      {/* Overall Score Display */}
-      <View style={styles.scoreContainer}>
-        <Surface style={[styles.scoreCard, { backgroundColor: theme.colors.primaryContainer }]}>
-          <Text style={styles.scoreName}>{settings.playerNames.player1}</Text>
-          <Text style={styles.scoreValue}>{gameStats?.scores?.X || 0}</Text>
+      <View style={AppStyles.resultScoreContainer}>
+        <Surface style={[AppStyles.resultScoreCard, { backgroundColor: theme.colors.primaryContainer }]}>
+          <Text style={AppStyles.resultScoreName}>{settings.playerNames.player1}</Text>
+          <Text style={AppStyles.resultScoreValue}>{gameStats?.scores?.X || 0}</Text>
         </Surface>
         
-        <Surface style={[styles.scoreCard, { backgroundColor: theme.colors.surfaceVariant }]}>
-          <Text style={styles.scoreName}>Draws</Text>
-          <Text style={styles.scoreValue}>{gameStats?.scores?.draws || 0}</Text>
+        <Surface style={[AppStyles.resultScoreCard, { backgroundColor: theme.colors.surfaceVariant }]}>
+          <Text style={AppStyles.resultScoreName}>Draws</Text>
+          <Text style={AppStyles.resultScoreValue}>{gameStats?.scores?.draws || 0}</Text>
         </Surface>
         
-        <Surface style={[styles.scoreCard, { backgroundColor: theme.colors.secondaryContainer }]}>
-          <Text style={styles.scoreName}>{settings.playerNames.player2}</Text>
-          <Text style={styles.scoreValue}>{gameStats?.scores?.O || 0}</Text>
+        <Surface style={[AppStyles.resultScoreCard, { backgroundColor: theme.colors.secondaryContainer }]}>
+          <Text style={AppStyles.resultScoreName}>{settings.playerNames.player2}</Text>
+          <Text style={AppStyles.resultScoreValue}>{gameStats?.scores?.O || 0}</Text>
         </Surface>
       </View>
 
-      {/* Action Buttons */}
-      <View style={styles.actionButtons}>
+      <View style={AppStyles.resultActionButtons}>
         <Button
           mode="contained"
           onPress={playAgain}
-          style={[styles.actionButton, styles.playAgainButton]}
-          contentStyle={styles.buttonContent}
+          style={[AppStyles.resultActionButton, AppStyles.resultPlayAgainButton]}
+          contentStyle={AppStyles.buttonContent}
           icon="refresh"
         >
           Play Again
@@ -453,16 +430,15 @@ ${settings.gameMode === 'pvc' ? `🧠 AI Difficulty: ${settings.difficulty}` : '
         <Button
           mode="outlined"
           onPress={goToSettings}
-          style={styles.actionButton}
-          contentStyle={styles.buttonContent}
+          style={AppStyles.resultActionButton}
+          contentStyle={AppStyles.buttonContent}
           icon="cog"
         >
           New Game
         </Button>
       </View>
 
-      {/* Secondary Actions */}
-      <View style={styles.secondaryActions}>
+      <View style={AppStyles.resultSecondaryActions}>
         <Button
           mode="text"
           onPress={shareResult}
@@ -482,13 +458,12 @@ ${settings.gameMode === 'pvc' ? `🧠 AI Difficulty: ${settings.difficulty}` : '
         </Button>
       </View>
 
-      {/* Quick Social Share (Web only) */}
       {Platform.OS === 'web' && (
-        <View style={styles.socialShareContainer}>
-          <Text style={[styles.socialShareTitle, { color: theme.colors.onSurfaceVariant }]}>
+        <View style={AppStyles.resultSocialShareContainer}>
+          <Text style={[AppStyles.resultSocialShareTitle, { color: theme.colors.onSurfaceVariant }]}>
             Quick Share:
           </Text>
-          <View style={styles.socialButtons}>
+          <View style={AppStyles.resultSocialButtons}>
             <IconButton
               icon="twitter"
               size={24}
@@ -519,138 +494,3 @@ ${settings.gameMode === 'pvc' ? `🧠 AI Difficulty: ${settings.difficulty}` : '
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    paddingTop: 60,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  resultCard: {
-    marginBottom: 30,
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-  },
-  resultContent: {
-    alignItems: 'center',
-    paddingVertical: 20,
-  },
-  resultIcon: {
-    marginBottom: 15,
-  },
-  resultTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  resultSubtitle: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 15,
-  },
-  experienceCard: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginTop: 10,
-  },
-  experienceText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  statsCard: {
-    marginBottom: 20,
-  },
-  statsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  statLabel: {
-    fontSize: 12,
-    textAlign: 'center',
-  },
-  scoreContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 30,
-  },
-  scoreCard: {
-    flex: 1,
-    marginHorizontal: 5,
-    padding: 15,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  scoreName: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    textAlign: 'center',
-  },
-  scoreValue: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  actionButton: {
-    flex: 0.48,
-  },
-  playAgainButton: {
-    elevation: 4,
-  },
-  buttonContent: {
-    paddingVertical: 8,
-  },
-  secondaryActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
-  },
-  socialShareContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  socialShareTitle: {
-    fontSize: 14,
-    marginBottom: 10,
-  },
-  socialButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-});
