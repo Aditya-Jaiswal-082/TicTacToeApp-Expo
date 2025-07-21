@@ -20,6 +20,7 @@ export default function HomeScreen({ onNavigate }) {
   const [difficulty, setDifficulty] = useState('medium');
   const [player1Name, setPlayer1Name] = useState('Player 1');
   const [player2Name, setPlayer2Name] = useState('Player 2');
+  const [playerIcon, setPlayerIcon] = useState('X'); // New state for icon selection
 
   const theme = useTheme();
 
@@ -36,11 +37,18 @@ export default function HomeScreen({ onNavigate }) {
     { label: 'Expert', value: 'expert' },
   ];
 
+  // New icon selection options
+  const iconOptions = [
+    { value: 'X', label: '❌ X' },
+    { value: 'O', label: '⭕ O' },
+  ];
+
   const startGame = () => {
     const settings = {
       gridSize: parseInt(gridSize),
       gameMode,
       difficulty,
+      playerIcon, // Include player icon choice
       playerNames: {
         player1: player1Name,
         player2: gameMode === 'pvc' ? 'AI' : player2Name
@@ -59,7 +67,6 @@ export default function HomeScreen({ onNavigate }) {
     }
   };
 
-  // Updated grid descriptions with new win criteria
   const getGridDescription = (size) => {
     const winLength = getWinLength(parseInt(size));
     switch (size) {
@@ -68,6 +75,14 @@ export default function HomeScreen({ onNavigate }) {
       case '5': return `Large 5×5 grid - Get ${winLength} in a row to win (More strategic!)`;
       default: return '';
     }
+  };
+
+  const getOpponentIcon = () => {
+    return playerIcon === 'X' ? 'O' : 'X';
+  };
+
+  const getOpponentName = () => {
+    return gameMode === 'pvc' ? 'AI' : player2Name;
   };
 
   return (
@@ -81,7 +96,7 @@ export default function HomeScreen({ onNavigate }) {
       >
         <View style={AppStyles.homeHeader}>
           <Title style={[AppStyles.homeTitle, { color: theme.colors.primary }]}>
-            🎮 TicGridToe
+            🎮 Tic Tac Toe
           </Title>
           <Text style={[AppStyles.homeSubtitle, { color: theme.colors.onSurfaceVariant }]}>
             Choose your game settings and start playing!
@@ -102,6 +117,32 @@ export default function HomeScreen({ onNavigate }) {
               buttons={gridSizeOptions}
               style={AppStyles.homeSegmentedButtons}
             />
+          </Card.Content>
+        </Card>
+
+        {/* New Icon Selection Card */}
+        <Card style={[AppStyles.homeCard, { backgroundColor: theme.colors.surface }]}>
+          <Card.Content>
+            <Text style={[AppStyles.homeSectionTitle, { color: theme.colors.onSurface }]}>
+              🎨 Choose Your Icon
+            </Text>
+            <Text style={[AppStyles.homeSectionDescription, { color: theme.colors.onSurfaceVariant }]}>
+              Select whether you want to play as X or O
+            </Text>
+            <SegmentedButtons
+              value={playerIcon}
+              onValueChange={setPlayerIcon}
+              buttons={iconOptions}
+              style={AppStyles.homeSegmentedButtons}
+            />
+            <View style={[AppStyles.homeSummaryRow, { marginTop: 10 }]}>
+              <Text style={[AppStyles.homeSummaryLabel, { color: theme.colors.onSurfaceVariant }]}>
+                You: {playerIcon === 'X' ? '❌' : '⭕'} {playerIcon}
+              </Text>
+              <Text style={[AppStyles.homeSummaryLabel, { color: theme.colors.onSurfaceVariant }]}>
+                {getOpponentName()}: {getOpponentIcon() === 'X' ? '❌' : '⭕'} {getOpponentIcon()}
+              </Text>
+            </View>
           </Card.Content>
         </Card>
 
@@ -177,7 +218,7 @@ export default function HomeScreen({ onNavigate }) {
               Customize player names
             </Text>
             <TextInput
-              label="Player 1 Name"
+              label={`Player 1 Name (${playerIcon})`}
               value={player1Name}
               onChangeText={setPlayer1Name}
               style={AppStyles.homeTextInput}
@@ -186,7 +227,7 @@ export default function HomeScreen({ onNavigate }) {
             />
             {gameMode === 'pvp' && (
               <TextInput
-                label="Player 2 Name"
+                label={`Player 2 Name (${getOpponentIcon()})`}
                 value={player2Name}
                 onChangeText={setPlayer2Name}
                 style={AppStyles.homeTextInput}
@@ -220,6 +261,14 @@ export default function HomeScreen({ onNavigate }) {
             </View>
             <View style={AppStyles.homeSummaryRow}>
               <Text style={[AppStyles.homeSummaryLabel, { color: theme.colors.onPrimaryContainer }]}>
+                Your Icon:
+              </Text>
+              <Text style={[AppStyles.homeSummaryValue, { color: theme.colors.onPrimaryContainer }]}>
+                {playerIcon === 'X' ? '❌' : '⭕'} {playerIcon}
+              </Text>
+            </View>
+            <View style={AppStyles.homeSummaryRow}>
+              <Text style={[AppStyles.homeSummaryLabel, { color: theme.colors.onPrimaryContainer }]}>
                 Mode:
               </Text>
               <Text style={[AppStyles.homeSummaryValue, { color: theme.colors.onPrimaryContainer }]}>
@@ -231,7 +280,7 @@ export default function HomeScreen({ onNavigate }) {
                 Players:
               </Text>
               <Text style={[AppStyles.homeSummaryValue, { color: theme.colors.onPrimaryContainer }]}>
-                {player1Name} vs {gameMode === 'pvc' ? 'AI' : player2Name}
+                {player1Name} ({playerIcon}) vs {getOpponentName()} ({getOpponentIcon()})
               </Text>
             </View>
           </Card.Content>

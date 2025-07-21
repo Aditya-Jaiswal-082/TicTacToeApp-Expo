@@ -13,7 +13,7 @@ import {
 } from 'react-native-paper';
 import { AppStyles } from '../styles/app';
 import GameBoard from '../components/GameBoard';
-import { createGrid, checkWinner, getAvailableMoves, getWinLength, getWinningOpportunities } from '../utils/gameLogic';
+import { createGrid, checkWinner, getAvailableMoves, getWinLength } from '../utils/gameLogic';
 
 const { width, height } = Dimensions.get('window');
 
@@ -113,7 +113,7 @@ export default function GameScreen({ settings, onNavigate, initialScores, onScor
         setIsAIThinking(false);
       };
     }
-  }, [currentPlayer, gameStatus, safeSettings.gameMode]);
+  }, [currentPlayer, gameStatus, safeSettings.gameMode, grid]);
 
   const makeMove = (index) => {
     if (grid[index] || gameStatus !== 'playing' || isAIThinking) return;
@@ -126,41 +126,83 @@ export default function GameScreen({ settings, onNavigate, initialScores, onScor
     setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
   };
 
-  // Enhanced AI with new win criteria awareness
-  const makeAIMove = () => {
-    const availableMoves = getAvailableMoves(grid);
-    if (availableMoves.length === 0) return;
+  // Helper function to get all possible winning lines
+  const getAllPossibleLines = (gridSize, winLength) => {
+    const lines = [];
     
-    let selectedMove;
-    
-    switch (safeSettings.difficulty) {
-      case 'easy':
-        selectedMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
-        break;
-      case 'medium':
-        selectedMove = getEnhancedStrategicMove(availableMoves) || 
-                     availableMoves[Math.floor(Math.random() * availableMoves.length)];
-        break;
-      case 'hard':
-      case 'expert':
-        selectedMove = getAdvancedStrategicMove(availableMoves) || 
-                     getEnhancedStrategicMove(availableMoves) || 
-                     availableMoves[Math.floor(Math.random() * availableMoves.length)];
-        break;
-      default:
-        selectedMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    // Horizontal lines
+    for (let row = 0; row < gridSize; row++) {
+      for (let startCol = 0; startCol <= gridSize - winLength; startCol++) {
+        const line = [];
+        for (let i = 0; i < winLength; i++) {
+          line.push(row * gridSize + startCol + i);
+        }
+        lines.push(line);
+      }
     }
     
-    makeMove(selectedMove);
+    // Vertical lines
+    for (let col = 0; col < gridSize; col++) {
+      for (let startRow = 0; startRow <= gridSize - winLength; startRow++) {
+        const line = [];
+        for (let i = 0; i < winLength; i++) {
+          line.push((startRow + i) * gridSize + col);
+        }
+        lines.push(line);
+      }
+    }
+    
+    // Diagonal lines (top-left to bottom-right)
+    for (let row = 0; row <= gridSize - winLength; row++) {
+      for (let col = 0; col <= gridSize - winLength; col++) {
+        const line = [];
+        for (let i = 0; i < winLength; i++) {
+          line.push((row + i) * gridSize + col + i);
+        }
+        lines.push(line);
+      }
+    }
+    
+    // Diagonal lines (top-right to bottom-left)
+    for (let row = 0; row <= gridSize - winLength; row++) {
+      for (let col = winLength - 1; col < gridSize; col++) {
+        const line = [];
+        for (let i = 0; i < winLength; i++) {
+          line.push((row + i) * gridSize + col - i);
+        }
+        lines.push(line);
+      }
+    }
+    
+    return lines;
   };
 
-  // Enhanced strategic move with new win criteria
+  // Helper function for corner positions
+  const getCornerPositions = (gridSize) => {
+    return [
+      0, // Top-left
+      gridSize - 1, // Top-right
+      (gridSize - 1) * gridSize, // Bottom-left
+      gridSize * gridSize - 1 // Bottom-right
+    ];
+  };
+
+  // Get center position for odd-sized grids
+  const getCenterPosition = (gridSize) => {
+    if (gridSize % 2 === 1) {
+      return Math.floor((gridSize * gridSize) / 2);
+    }
+    return null;
+  };
+
+  // Enhanced strategic move with proper logic
   const getEnhancedStrategicMove = (availableMoves) => {
     // Priority 1: Win immediately if possible
     for (let move of availableMoves) {
       const testGrid = [...grid];
       testGrid[move] = 'O';
-      if (checkWinner(testGrid, safeSettings.gridSize).winner === 'O') {
+      const result = checkWinner(testGrid, safeSettings.gridSize);
+      if (result.winner === 'O') {
         return move;
       }
     }
@@ -169,67 +211,134 @@ export default function GameScreen({ settings, onNavigate, initialScores, onScor
     for (let move of availableMoves) {
       const testGrid = [...grid];
       testGrid[move] = 'X';
-      if (checkWinner(testGrid, safeSettings.gridSize).winner === 'X') {
+      const result = checkWinner(testGrid, safeSettings.gridSize);
+      if (result.winner === 'X') {
         return move;
       }
     }
     
-    // Priority 3: Create multiple winning opportunities
-    let bestMove = null;
-    let maxOpportunities = 0;
+    // Priority 3: Take center if available (for odd-sized grids)
+    const center = getCenterPosition(safeSettings.gridSize);
+    if (center !== null && availableMoves.includes(center)) {
+      return center;
+    }
     
-    for (let move of availableMoves) {
-      const testGrid = [...grid];
-      testGrid[move] = 'O';
-      const opportunities = getWinningOpportunities(testGrid, safeSettings.gridSize, 'O');
-      
-      if (opportunities.length > maxOpportunities) {
-        maxOpportunities = opportunities.length;
-        bestMove = move;
+    // Priority 4: Take corners
+    const corners = getCornerPositions(safeSettings.gridSize);
+    for (let corner of corners) {
+      if (availableMoves.includes(corner)) {
+        return corner;
       }
     }
     
-    if (bestMove !== null) return bestMove;
-    
+    // Priority 5: Take edges
     return null;
   };
 
-  // Advanced strategic move for hard/expert AI
+  // Advanced strategic move for harder difficulties
   const getAdvancedStrategicMove = (availableMoves) => {
-    const winLength = getWinLength(safeSettings.gridSize);
-    
-    // Look for moves that create immediate threats
-    for (let move of availableMoves) {
-      const testGrid = [...grid];
-      testGrid[move] = 'O';
-      
-      // Count how many ways this move could lead to a win
-      const opportunities = getWinningOpportunities(testGrid, safeSettings.gridSize, 'O');
-      const highPriorityOpportunities = opportunities.filter(op => op.playerCount >= winLength - 1);
-      
-      if (highPriorityOpportunities.length >= 2) { // Creates multiple immediate threats
-        return move;
-      }
+    // First, try the basic strategic move
+    const basicMove = getEnhancedStrategicMove(availableMoves);
+    if (basicMove !== null) {
+      return basicMove;
     }
     
-    // Look for moves that build towards multiple winning lines
+    // Look for moves that create multiple opportunities
+    const winLength = getWinLength(safeSettings.gridSize);
     let bestMove = null;
-    let bestScore = 0;
+    let maxScore = 0;
     
     for (let move of availableMoves) {
       const testGrid = [...grid];
       testGrid[move] = 'O';
       
-      const opportunities = getWinningOpportunities(testGrid, safeSettings.gridSize, 'O');
-      const score = opportunities.reduce((sum, op) => sum + op.priority, 0);
+      // Count potential winning lines this move creates
+      let score = 0;
+      const lines = getAllPossibleLines(safeSettings.gridSize, winLength);
       
-      if (score > bestScore) {
-        bestScore = score;
+      for (let line of lines) {
+        if (line.includes(move)) {
+          const values = line.map(pos => testGrid[pos]);
+          const oCount = values.filter(v => v === 'O').length;
+          const emptyCount = values.filter(v => v === null).length;
+          const xCount = values.filter(v => v === 'X').length;
+          
+          // Score this line if it has potential (no X's blocking)
+          if (xCount === 0 && oCount > 0) {
+            score += oCount * oCount; // Exponential scoring for better positions
+          }
+        }
+      }
+      
+      if (score > maxScore) {
+        maxScore = score;
         bestMove = move;
       }
     }
     
     return bestMove;
+  };
+
+  // Main AI move function with proper fallbacks
+  const makeAIMove = () => {
+    const availableMoves = getAvailableMoves(grid);
+    if (availableMoves.length === 0) return;
+    
+    let selectedMove = null;
+    
+    try {
+      switch (safeSettings.difficulty) {
+        case 'easy':
+          // 30% strategic, 70% random
+          if (Math.random() > 0.7) {
+            selectedMove = getEnhancedStrategicMove(availableMoves);
+          }
+          break;
+          
+        case 'medium':
+          // 80% strategic, 20% random
+          if (Math.random() > 0.2) {
+            selectedMove = getEnhancedStrategicMove(availableMoves);
+          }
+          break;
+          
+        case 'hard':
+          // Always strategic with advanced moves
+          selectedMove = getAdvancedStrategicMove(availableMoves);
+          if (!selectedMove) {
+            selectedMove = getEnhancedStrategicMove(availableMoves);
+          }
+          break;
+          
+        case 'expert':
+          // Always use the best strategy available
+          selectedMove = getAdvancedStrategicMove(availableMoves);
+          if (!selectedMove) {
+            selectedMove = getEnhancedStrategicMove(availableMoves);
+          }
+          break;
+          
+        default:
+          selectedMove = getEnhancedStrategicMove(availableMoves);
+      }
+    } catch (error) {
+      console.log('AI strategy error:', error);
+      selectedMove = null;
+    }
+    
+    // Fallback to random if no strategic move found
+    if (!selectedMove) {
+      selectedMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    }
+    
+    // Make the move
+    if (selectedMove !== null && availableMoves.includes(selectedMove)) {
+      makeMove(selectedMove);
+    } else {
+      // Emergency fallback
+      const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+      makeMove(randomMove);
+    }
   };
 
   const resetGame = () => {
