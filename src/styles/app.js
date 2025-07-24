@@ -2,13 +2,66 @@ import { StyleSheet, Platform, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
+// Enhanced Gaming Color Palette
+export const GameColors = {
+  // Main theme colors
+  primary: '#6366F1',        // Modern indigo
+  primaryDark: '#4F46E5',    // Darker indigo for depth
+  primaryLight: '#A5B4FC',   // Light indigo for highlights
+  secondary: '#EC4899',      // Vibrant pink
+  secondaryDark: '#DB2777',  // Darker pink for contrast
+  tertiary: '#8B5CF6',       // Purple accent
+  
+  // Background colors
+  background: '#0F172A',     // Deep slate (dark theme)
+  backgroundLight: '#F8FAFC', // Light gray (light theme)
+  surface: '#1E293B',       // Card backgrounds (dark)
+  surfaceLight: '#FFFFFF',  // Card backgrounds (light)
+  surfaceVariant: '#334155', // Alternative surface
+  
+  // Game-specific colors
+  playerX: '#EF4444',       // Bold red for X
+  playerO: '#10B981',       // Emerald green for O
+  gridLines: '#475569',     // Subtle gray for grid
+  gridBackground: '#0F172A', // Grid container background
+  
+  // Status colors
+  success: '#22C55E',       // Green for wins
+  warning: '#F59E0B',       // Amber for draws
+  error: '#EF4444',         // Red for losses
+  info: '#3B82F6',          // Blue for information
+  
+  // Text colors
+  textPrimary: '#F1F5F9',   // Light text (dark theme)
+  textSecondary: '#94A3B8', // Muted text (dark theme)
+  textDark: '#0F172A',      // Dark text (light theme)
+  textMuted: '#64748B',     // Muted text (light theme)
+  textAccent: '#A78BFA',    // Purple accent text
+  
+  // Interactive colors
+  buttonPrimary: '#6366F1',
+  buttonSecondary: '#EC4899',
+  buttonSuccess: '#22C55E',
+  buttonDanger: '#EF4444',
+  
+  // Border and outline colors
+  border: '#374151',
+  borderLight: '#E5E7EB',
+  outline: '#6366F1',
+  
+  // Overlay and shadow colors
+  overlay: 'rgba(15, 23, 42, 0.8)',
+  shadow: 'rgba(0, 0, 0, 0.25)',
+  shadowLight: 'rgba(0, 0, 0, 0.1)',
+};
+
 export const AppStyles = StyleSheet.create({
   // ======================
   // APP.JS STYLES
   // ======================
   appContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: GameColors.background,
   },
 
   // ======================
@@ -16,7 +69,7 @@ export const AppStyles = StyleSheet.create({
   // ======================
   safeArea: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: GameColors.background,
   },
   container: {
     flex: 1,
@@ -27,11 +80,15 @@ export const AppStyles = StyleSheet.create({
   },
   card: {
     marginBottom: 20,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    elevation: 6,
+    shadowColor: GameColors.shadow,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
     shadowRadius: 4,
+    backgroundColor: GameColors.surface,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: GameColors.border,
   },
   buttonContent: {
     paddingVertical: 8,
@@ -56,28 +113,39 @@ export const AppStyles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 8,
     fontSize: 32,
+    color: GameColors.primary,
     fontWeight: 'bold',
+    textShadowColor: GameColors.shadow,
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   homeSubtitle: {
     textAlign: 'center',
     fontSize: 16,
+    color: GameColors.textSecondary,
   },
   homeCard: {
     marginBottom: 20,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    elevation: 6,
+    shadowColor: GameColors.shadow,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
     shadowRadius: 4,
+    backgroundColor: GameColors.surface,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: GameColors.border,
   },
   homeSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: GameColors.textPrimary,
   },
   homeSectionDescription: {
     fontSize: 14,
     marginBottom: 15,
+    color: GameColors.textSecondary,
   },
   homeSegmentedButtons: {
     marginBottom: 10,
@@ -86,6 +154,10 @@ export const AppStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 15,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: GameColors.surfaceVariant,
   },
   homeRadioText: {
     flex: 1,
@@ -94,45 +166,61 @@ export const AppStyles = StyleSheet.create({
   homeRadioLabel: {
     fontSize: 16,
     fontWeight: '500',
+    color: GameColors.textPrimary,
   },
   homeRadioSubtext: {
     fontSize: 12,
     marginTop: 2,
+    color: GameColors.textMuted,
   },
   homeTextInput: {
     marginBottom: 15,
   },
   homeSummaryCard: {
     marginBottom: 25,
+    backgroundColor: GameColors.primary,
+    borderRadius: 16,
+    elevation: 8,
+    shadowColor: GameColors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
   },
   homeSummaryTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 15,
     textAlign: 'center',
+    color: GameColors.backgroundLight,
   },
   homeSummaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 8,
+    paddingHorizontal: 4,
   },
   homeSummaryLabel: {
     fontSize: 14,
     fontWeight: '500',
+    color: GameColors.backgroundLight,
   },
   homeSummaryValue: {
     fontSize: 14,
     fontWeight: 'bold',
+    color: GameColors.backgroundLight,
   },
   homeStartButton: {
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    elevation: 10,
+    shadowColor: GameColors.secondary,
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    backgroundColor: GameColors.secondary,
+    borderRadius: 16,
   },
   homeStartButtonContent: {
-    paddingVertical: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
   },
 
   // ======================
@@ -144,6 +232,7 @@ export const AppStyles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     paddingTop: 10,
+    paddingHorizontal: 4,
   },
   gameHeaderCenter: {
     alignItems: 'center',
@@ -152,18 +241,25 @@ export const AppStyles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: GameColors.textPrimary,
   },
   gameStatusCard: {
     marginBottom: 15,
-    elevation: 4,
+    elevation: 6,
+    backgroundColor: GameColors.surface,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: GameColors.border,
   },
   gameStatusContent: {
     alignItems: 'center',
+    paddingVertical: 16,
   },
   gameStatus: {
     textAlign: 'center',
     fontSize: 18,
     fontWeight: 'bold',
+    color: GameColors.primary,
   },
   gameThinkingProgress: {
     width: '100%',
@@ -180,17 +276,22 @@ export const AppStyles = StyleSheet.create({
     padding: 15,
     borderRadius: 12,
     alignItems: 'center',
-    elevation: 2,
+    elevation: 4,
+    backgroundColor: GameColors.surface,
+    borderWidth: 1,
+    borderColor: GameColors.border,
   },
   gameScoreName: {
     fontSize: 12,
     fontWeight: 'bold',
     marginBottom: 5,
     textAlign: 'center',
+    color: GameColors.textSecondary,
   },
   gameScoreValue: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: GameColors.textPrimary,
   },
   gameInfo: {
     flexDirection: 'row',
@@ -201,6 +302,7 @@ export const AppStyles = StyleSheet.create({
   gameInfoChip: {
     marginHorizontal: 4,
     marginVertical: 2,
+    backgroundColor: GameColors.surfaceVariant,
   },
   gameActionButtons: {
     flexDirection: 'row',
@@ -210,6 +312,7 @@ export const AppStyles = StyleSheet.create({
   },
   gameActionButton: {
     minWidth: 120,
+    borderRadius: 12,
   },
   gameOverActions: {
     flexDirection: 'row',
@@ -219,6 +322,7 @@ export const AppStyles = StyleSheet.create({
   },
   gameOverButton: {
     minWidth: 140,
+    borderRadius: 12,
   },
 
   // ======================
@@ -226,17 +330,16 @@ export const AppStyles = StyleSheet.create({
   // ======================
   gameBoard: {
     alignSelf: 'center',
-    borderRadius: 16,
-    padding: 8,
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    borderWidth: 2,
+    borderRadius: 20,
+    padding: 12,
+    elevation: 12,
+    shadowColor: GameColors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    borderWidth: 3,
+    borderColor: GameColors.primary,
+    backgroundColor: GameColors.gridBackground,
   },
   gameBoardGridContainer: {
     alignItems: 'center',
@@ -255,15 +358,15 @@ export const AppStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    borderColor: GameColors.gridLines,
+    elevation: 6,
+    shadowColor: GameColors.shadow,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
     position: 'relative',
+    backgroundColor: GameColors.surfaceLight,
+    margin: 2,
   },
   gameCellText: {
     fontWeight: 'bold',
@@ -274,13 +377,36 @@ export const AppStyles = StyleSheet.create({
       default: 'System',
     }),
     textAlign: 'center',
+    textShadowColor: GameColors.shadow,
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   gameCellEmptyIndicator: {
     position: 'absolute',
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    opacity: 0,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    opacity: 0.3,
+    backgroundColor: GameColors.textMuted,
+  },
+
+  // Player-specific cell styles
+  gameCellX: {
+    color: GameColors.playerX,
+    fontSize: 36,
+  },
+  gameCellO: {
+    color: GameColors.playerO,
+    fontSize: 36,
+  },
+  
+  // Winning cell highlight
+  gameCellWinning: {
+    backgroundColor: GameColors.primary,
+    borderColor: GameColors.primaryDark,
+    elevation: 8,
+    shadowOpacity: 0.5,
+    transform: [{ scale: 1.05 }],
   },
 
   // ======================
@@ -290,6 +416,7 @@ export const AppStyles = StyleSheet.create({
     flex: 1,
     padding: 20,
     paddingTop: 60,
+    backgroundColor: GameColors.background,
   },
   resultHeader: {
     flexDirection: 'row',
@@ -300,17 +427,22 @@ export const AppStyles = StyleSheet.create({
   resultHeaderTitle: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: GameColors.textPrimary,
   },
   resultCard: {
     marginBottom: 30,
     elevation: 8,
-    shadowColor: '#000',
+    shadowColor: GameColors.shadow,
     shadowOffset: {
       width: 0,
       height: 4,
     },
     shadowOpacity: 0.3,
     shadowRadius: 4.65,
+    backgroundColor: GameColors.surface,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: GameColors.border,
   },
   resultContent: {
     alignItems: 'center',
@@ -324,46 +456,70 @@ export const AppStyles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
+    color: GameColors.textPrimary,
+    textShadowColor: GameColors.shadow,
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   resultSubtitle: {
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 15,
+    color: GameColors.textSecondary,
+    lineHeight: 22,
   },
   resultExperienceCard: {
     paddingHorizontal: 20,
     paddingVertical: 8,
     borderRadius: 20,
     marginTop: 10,
+    backgroundColor: GameColors.primary,
+    elevation: 4,
+    shadowColor: GameColors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
   },
   resultExperienceText: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: GameColors.backgroundLight,
+    textAlign: 'center',
   },
   resultStatsCard: {
     marginBottom: 20,
+    backgroundColor: GameColors.surface,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: GameColors.border,
+    elevation: 4,
   },
   resultStatsTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 15,
     textAlign: 'center',
+    color: GameColors.textPrimary,
   },
   resultStatsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+    paddingVertical: 10,
   },
   resultStatItem: {
     alignItems: 'center',
+    minWidth: 80,
   },
   resultStatValue: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: GameColors.primary,
   },
   resultStatLabel: {
     fontSize: 12,
     textAlign: 'center',
+    color: GameColors.textMuted,
   },
   resultScoreContainer: {
     flexDirection: 'row',
@@ -376,16 +532,22 @@ export const AppStyles = StyleSheet.create({
     padding: 15,
     borderRadius: 12,
     alignItems: 'center',
+    backgroundColor: GameColors.surfaceVariant,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: GameColors.border,
   },
   resultScoreName: {
     fontSize: 12,
     fontWeight: 'bold',
     marginBottom: 5,
     textAlign: 'center',
+    color: GameColors.textPrimary,
   },
   resultScoreValue: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: GameColors.primary,
   },
   resultActionButtons: {
     flexDirection: 'row',
@@ -394,9 +556,15 @@ export const AppStyles = StyleSheet.create({
   },
   resultActionButton: {
     flex: 0.48,
+    borderRadius: 12,
   },
   resultPlayAgainButton: {
-    elevation: 4,
+    elevation: 6,
+    backgroundColor: GameColors.secondary,
+    shadowColor: GameColors.secondary,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
   },
   resultSecondaryActions: {
     flexDirection: 'row',
@@ -406,15 +574,160 @@ export const AppStyles = StyleSheet.create({
   resultSocialShareContainer: {
     alignItems: 'center',
     marginTop: 10,
+    padding: 15,
+    backgroundColor: GameColors.surfaceVariant,
+    borderRadius: 12,
   },
   resultSocialShareTitle: {
     fontSize: 14,
     marginBottom: 10,
+    color: GameColors.textSecondary,
+    fontWeight: '500',
   },
   resultSocialButtons: {
     flexDirection: 'row',
     justifyContent: 'center',
+    gap: 10,
+  },
+
+  // ======================
+  // STATUS-SPECIFIC STYLES
+  // ======================
+  // Win state styles
+  resultWin: {
+    color: GameColors.success,
+  },
+  resultWinCard: {
+    backgroundColor: GameColors.success,
+    borderColor: GameColors.success,
+  },
+  
+  // Loss state styles
+  resultLoss: {
+    color: GameColors.error,
+  },
+  resultLossCard: {
+    backgroundColor: GameColors.error,
+    borderColor: GameColors.error,
+  },
+  
+  // Draw state styles
+  resultDraw: {
+    color: GameColors.warning,
+  },
+  resultDrawCard: {
+    backgroundColor: GameColors.warning,
+    borderColor: GameColors.warning,
+  },
+
+  // ======================
+  // UTILITY STYLES
+  // ======================
+  // Text utilities
+  textPrimary: {
+    color: GameColors.textPrimary,
+  },
+  textSecondary: {
+    color: GameColors.textSecondary,
+  },
+  textAccent: {
+    color: GameColors.textAccent,
+  },
+  textSuccess: {
+    color: GameColors.success,
+  },
+  textWarning: {
+    color: GameColors.warning,
+  },
+  textError: {
+    color: GameColors.error,
+  },
+  
+  // Background utilities
+  bgPrimary: {
+    backgroundColor: GameColors.primary,
+  },
+  bgSecondary: {
+    backgroundColor: GameColors.secondary,
+  },
+  bgSurface: {
+    backgroundColor: GameColors.surface,
+  },
+  bgSuccess: {
+    backgroundColor: GameColors.success,
+  },
+  bgWarning: {
+    backgroundColor: GameColors.warning,
+  },
+  bgError: {
+    backgroundColor: GameColors.error,
+  },
+  
+  // Border utilities
+  borderPrimary: {
+    borderColor: GameColors.primary,
+  },
+  borderSecondary: {
+    borderColor: GameColors.secondary,
+  },
+  borderSuccess: {
+    borderColor: GameColors.success,
+  },
+  borderWarning: {
+    borderColor: GameColors.warning,
+  },
+  borderError: {
+    borderColor: GameColors.error,
+  },
+
+  // ======================
+  // ANIMATION HELPERS
+  // ======================
+  fadeIn: {
+    opacity: 1,
+  },
+  fadeOut: {
+    opacity: 0,
+  },
+  scaleUp: {
+    transform: [{ scale: 1.1 }],
+  },
+  scaleDown: {
+    transform: [{ scale: 0.9 }],
+  },
+  
+  // Press states
+  buttonPressed: {
+    opacity: 0.8,
+    transform: [{ scale: 0.98 }],
+  },
+  cellPressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.95 }],
+  },
+
+  // ======================
+  // RESPONSIVE HELPERS
+  // ======================
+  // For different screen sizes
+  smallScreen: {
+    paddingHorizontal: 10,
+  },
+  largeScreen: {
+    paddingHorizontal: 30,
+    maxWidth: 600,
+    alignSelf: 'center',
+  },
+  
+  // Tablet optimizations
+  tabletContainer: {
+    maxWidth: 800,
+    alignSelf: 'center',
+  },
+  tabletGameBoard: {
+    maxWidth: 400,
   },
 });
 
+// Only export once at the end
 export default AppStyles;

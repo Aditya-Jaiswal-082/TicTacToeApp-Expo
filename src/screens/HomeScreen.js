@@ -96,7 +96,7 @@ export default function HomeScreen({ onNavigate }) {
       >
         <View style={AppStyles.homeHeader}>
           <Title style={[AppStyles.homeTitle, { color: theme.colors.primary }]}>
-            🎮 Tic Tac Toe
+              Tic Grid Toe 
           </Title>
           <Text style={[AppStyles.homeSubtitle, { color: theme.colors.onSurfaceVariant }]}>
             Choose your game settings and start playing!
