@@ -47,10 +47,6 @@ yarn-error.log*
 # React Native Metro
 .metro-health-check*
 
-# Expo
-.expo/
-dist/
-web-build/
 
 # React Native Bundle artifacts
 *.jsbundle
@@ -60,7 +56,6 @@ web-build/
 
 # Expo
 .expo/
-dist/
 web-build/
 *.jks
 *.p8
