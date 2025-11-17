@@ -2,58 +2,48 @@ import { StyleSheet, Platform, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
-// Enhanced Gaming Color Palette
 export const GameColors = {
-  // Main theme colors
-  primary: '#6366F1',        // Modern indigo
-  primaryDark: '#4F46E5',    // Darker indigo for depth
-  primaryLight: '#A5B4FC',   // Light indigo for highlights
-  secondary: '#EC4899',      // Vibrant pink
-  secondaryDark: '#DB2777',  // Darker pink for contrast
-  tertiary: '#8B5CF6',       // Purple accent
-  
-  // Background colors
-  background: '#0F172A',     // Deep slate (dark theme)
-  backgroundLight: '#F8FAFC', // Light gray (light theme)
-  surface: '#1E293B',       // Card backgrounds (dark)
-  surfaceLight: '#FFFFFF',  // Card backgrounds (light)
-  surfaceVariant: '#334155', // Alternative surface
-  
+  // Core pastel theme
+  primary: "#7C83FD",        // Soft indigo
+  primaryLight: "#AAB3FF",   // Light lavender
+  primaryDark: "#545CFF",    // Deeper indigo
+
+  secondary: "#F6A9A3",      // Soft coral-pink
+  secondaryLight: "#FBD2CE",
+  secondaryDark: "#E57F76",
+
+  accent: "#9ED2C6",         // Mint pastel
+  accentLight: "#CDEFE7",
+  accentDark: "#6FB7A8",
+
+  // Backgrounds
+  background: "#F7F7FB",     // Near-white pastel gray
+  backgroundDark: "#ECECF5", // Slightly darker pastel
+  surface: "#FFFFFF",
+  surfaceVariant: "#F1F1FA",
+
   // Game-specific colors
-  playerX: '#EF4444',       // Bold red for X
-  playerO: '#10B981',       // Emerald green for O
-  gridLines: '#475569',     // Subtle gray for grid
-  gridBackground: '#0F172A', // Grid container background
-  
+  playerX: "#FF6B6B",        // Soft red
+  playerO: "#4ECDC4",        // Pastel teal
+  gridLines: "#D1D1E0",
+
   // Status colors
-  success: '#22C55E',       // Green for wins
-  warning: '#F59E0B',       // Amber for draws
-  error: '#EF4444',         // Red for losses
-  info: '#3B82F6',          // Blue for information
-  
+  success: "#7FD1AE",
+  warning: "#FFD97D",
+  error: "#FF8A80",
+  info: "#82A0FF",
+
   // Text colors
-  textPrimary: '#F1F5F9',   // Light text (dark theme)
-  textSecondary: '#94A3B8', // Muted text (dark theme)
-  textDark: '#0F172A',      // Dark text (light theme)
-  textMuted: '#64748B',     // Muted text (light theme)
-  textAccent: '#A78BFA',    // Purple accent text
-  
-  // Interactive colors
-  buttonPrimary: '#6366F1',
-  buttonSecondary: '#EC4899',
-  buttonSuccess: '#22C55E',
-  buttonDanger: '#EF4444',
-  
-  // Border and outline colors
-  border: '#374151',
-  borderLight: '#E5E7EB',
-  outline: '#6366F1',
-  
-  // Overlay and shadow colors
-  overlay: 'rgba(15, 23, 42, 0.8)',
-  shadow: 'rgba(0, 0, 0, 0.25)',
-  shadowLight: 'rgba(0, 0, 0, 0.1)',
+  textPrimary: "#333333",
+  textSecondary: "#696984",
+  textMuted: "#A3A3B5",
+
+  // Others
+  border: "#DDDDDD",
+  overlay: "rgba(0,0,0,0.08)",
+  shadow: "rgba(0,0,0,0.1)",
 };
+
 
 export const AppStyles = StyleSheet.create({
   // ======================
